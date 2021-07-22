@@ -44,9 +44,13 @@ The other primary target consists of people who may not have actually witnessed 
 
 
 
-# R2
+# R2 Dataflow Diagram
 
-# R3
+![alt text](./docs/sydney-paranormal-data.png "Sydney Paranormal Dataflow Diagram")
+
+# R3 Application Architecture Diagram
+
+![alt text](./docs/sydney-paranormal-architecture.png "Sydney Paranormal Application Architecture Diagram")
 
 # R4 USER STORIES
 
