@@ -13,21 +13,33 @@ In addition for those seeking answers to their experiences, it is also suitable 
 
 ## Functionality/Features:
 
+
+### Map
 - The main function of the application will be a map where a user can place a pin on a given location, representing a paranomal sighting.
 
+
+### Pins
 - Each pin can be clicked on whereby a window will open revealing the details pertaining to that pin.
 
-- Each window associated to a pin will have a chronological log of events, which can be added to either by the initial poster of the pin, or by other users, subject to whether permissions are granted by the initial poster.
+- Each window associated to a pin will have a list of notes representing a chronological list of sightings/events, which can be added to either by the initial poster of the pin, or by other users, subject to whether permissions are granted by the initial poster.
 
-- Each logged event listed within a pin can in turn be expanded where the user can write notes describing the sighting, and can also a gallery including any drawings or photographs of the sighting they may have taken.
 
+### Notes
+- Each note listed within a pin can in turn be expanded where the user can write details describing the sighting, and can also a gallery including any drawings or photographs of the sighting they may have taken.
+
+
+### Roleplaying functionality
 - A user when first initialising a pin will be able to decide whether the pin will have open permission for contributing to the pin.
 
 - A user who limits the permission for contributing to a pin will take on a moderating role, reminiscent to a 'dungeon master', whereby other users can contribute to the narrative of the pin subject to administrative approval.
 
+
+### Narrative expansion
 - An ability to link other pins (subject to the permissions of the other pins).
 
-- An ability to tell the user's location and notify them of any logged activity in the current area.
+
+### Real time location 
+- Using the user's location to notify them of any logged activity in the current area.
 
 
 
@@ -57,17 +69,23 @@ The other primary target consists of people who may not have actually witnessed 
 
 - As a witness to something strange, I wish to be able to tell as many people about it as I can.
 
+- As a witness to something strange, I wish to have a way of saving my story for posterity.
+
 - As a witness to something strange, I want a way to see if other's have experienced the same thing, so I know I'm not crazy.
 
 - As a witness to something strange, I want a way to see if other's have experienced the same thing, so I know I'm not alone.
 
-- As a witness to something strange, I wish to have a way of saving my story for posterity.
+- As who is relying on the testimony of strangers to uncover something paranormal, I wish to have the ability to moderate who can contribute to my story, so that the investigation doesn't get derailed by nonsense.
 
 - As an investigator of the paranormal I wish there was a repository of paranormal events so that I have the best information to form my theories.
 
 - As an investigator of the paranormal I wish there was a repository of paranormal events which logged sightings in detail, so that I may know where I'm best to concentrate my efforts.
 
+- As someone interested in a supernatural event, I wish there was a way for people to link similar sightings in different locations, so I may form a fuller picture.
+ 
 - As a potential property owner, I wish to see all the information pertaining to the supernatural, on a given location so that I may avoid buying somewhere haunted.
+
+- As someone who is terrified of bunyips I wish there was a way to take my location in real time and list any nearby sightings, so I may know which swimming holes are safe.
 
 - As seller of cryptids, I wish to have the freshest trails, so that I may finally capture one of these creatures and save my failing business.
 
