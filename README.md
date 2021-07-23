@@ -99,9 +99,9 @@ The other primary target consists of people who may not have actually witnessed 
 
 ## Home Page
 
-![home-desktop](wireframes/home-desktop.png)
+![home-desktop](docs/wireframes/home-desktop.png)
 
-![home-mobile](wireframes/home-mobile.png)
+![home-mobile](docs/wireframes/home-mobile.png)
 
 
 
