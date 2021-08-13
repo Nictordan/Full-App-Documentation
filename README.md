@@ -87,9 +87,9 @@ The other primary target consists of people who may not have actually witnessed 
 - Trello: Project management platform.
 
 
-# Dataflow Diagram
+# Flowchart
 
-![alt text](./docs/diagrams/sydney-paranormal-data.png "Sydney Paranormal Dataflow Diagram")
+![alt text](./docs/diagrams/sydney-paranormal-data.png "Sydney Paranormal Flowchart Diagram")
 
 # Application Architecture Diagram
 
