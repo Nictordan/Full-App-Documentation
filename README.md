@@ -86,64 +86,225 @@ The other primary target consists of people who may not have actually witnessed 
 - Git / GitHub: Technologies used for version control.
 - Trello: Project management platform.
 
+## Description of APIs Used
 
-# Flowchart
+### Mapbox
 
-![alt text](./docs/diagrams/sydney-paranormal-data.png "Sydney Paranormal Flowchart Diagram")
+Mapbox is an open source library for creating interactive maps. Aside from providing developers with a detailed documentation for integrating it in a JavaScript-based frontend application, it also provides tools for customizing the style of the map itself. This tool is called Mapbox Studio and it sits on Mapbox's website. 
 
-# Application Architecture Diagram
+In order to obtain an API key for enabling Mapbox, it is necessary to create a free account on https://mapbox.com. Once logged in, Mapbox will display a link that redirects to Mapbox Studio at the top of the page, as well as your API token at the bottom of the page.
 
-![alt text](./docs/diagrams/sydney-paranormal-architecture.png "Sydney Paranormal Application Architecture Diagram")
+![mapbox-home-page](./docs/screenshots/mapbox-home-page.png)
 
+Once the `Go to Mapbox Studio` button is clicked, the following page will load, displaying the map styles already created, or simply the options to either create a new style or upload an existing one. 
 
-# Wireframes
+![mapbox-styled-page](./docs/screenshots/mapbox-styled-page.png)
 
-## Home Page
+The map style in this case refers to  how does it look; Mapbox Studio allows users to customize not only the color, but also what kinds of information will be displayed on the map, such as street names, satellite imagery, etc. In the case of this project, the style selected was `Basic` with a `Galaxy` variation, which transforms the map style into dark mode.
 
-![home-desktop](docs/wireframes/home-desktop.png)
+![mapbox-styles](./docs/screenshots/mapbox-styles.png)
 
-![home-mobile](docs/wireframes/home-mobile.png)
+After clicking on `Customize Basic`, Mapbox Studio will load. The interface resembles that of a photo editor, as it allows users to add components and layers to the final product. In this case, since the details are already set up in the React app, all you need to do is click on the `Share` button located at the top-right corner of the navigation bar. When the modal window appears, simply copy the `Style URL` and your `Access token` located under `Developer Resources`, as illustrated below.
 
+![mapbox-style-export](./docs/screenshots/mapbox-style-export.png)
 
+Switching to the React app, the Mapbox API needs to be stored in a `.env` file at the root directory (outside of the `src` directory. Simply create one there and insert the following line of code. Remember not to leave any white spaces between the `=` sign and not to wrap the API key within quotes. Once saved. the file will be set to a dark grey color as it is set to be in the `.gitignore` file in order for the key not to be pushed to GitHub.
 
-## Activities Management Page
+```javascript
+REACT_APP_MAPBOX_KEY=your_api_key
+```
 
-![activities-desktop](docs/wireframes/activities-desktop.png)
+Then, in the `src/components/ParanormalMap/MapSetup.js` file, you will find the followin line of code. 
 
-![activities-mobile](docs/wireframes/activities-mobile.png)
+```js
+const mapboxApiKey = process.env.REACT_APP_MAPBOX_KEY;
+```
 
-## User Profile Page
+With the `mapboxApiKey` being updated to your API key, copy the `Style URL` from Mapbox Studio and paste it in the `mapStyle` props in the `return` section of the file, within quotes.
 
-![user-profile-desktop](docs/wireframes/user-profile-desktop.png)
+```js
+return (
+    <ReactMapGL
+ 		  ...
+			// RIGHT HERE //
+      mapboxApiAccessToken={mapboxApiKey}
+      mapStyle="your_Style_URL"
+    >
+      ...
+    </ReactMapGL>
+  );
+```
 
-![user-profile-mobile](docs/wireframes/user-profile-mobile.png)
+Once all of the above is configured as instructed, your map style should appear in the app.
 
-## Edit User Profile Page
+#### Important Notes about Mapbox
 
-![user-profile-edit](docs/wireframes/user-profile-edit.png)
+While the Mapbox API provides developers with a very detailed guide on how to integrate it in React, we chose to use a package called ReactMapGL instead. The main reason for this was because when loaded via the Mapbox API's package, called Mapbox GL JS, the map would crash whenever tests were written with Jest. In addition, the way Mapbox GL JS is written is clunkier and harder to follow. On the other hand, although the `ReactMapGL` package makes implementation easier, it also comes with many limitations. For example, whereas Mapbox GL JS allows for a great deal of customisation, such as adding 3D buildings, augmented reality features and heatmap, ReactMapGL does not seem to have the necessary tools to implement such features. In addition, the documentation does not provide vary many details on which more advanced features can be added. Given that the map features implemented in this project are quite minimal, sticking to ReactMapGL was the best choice.
 
-## Account Settings Page
+#### How the map talks to the backend and vice-versa
 
-![account-settings-desktop](docs/wireframes/account-settings-desktop.png)
+One of the biggest challenges of this project was to make a pin show up on the map after submitting a form with the required parameters, such as the pin's title, description, and address. First, it was necessary to add the `Geocoder` gem on Rails, which is a library that converts addresses to coordinates and vice-versa. Then, as instructed by the `Geocoder` documentation, the following code was added to the `Pin` model.
 
-![account-settings-mobile](docs/wireframes/account-settings-mobile.png)
+```ruby
+class Pin < ApplicationRecord
+  geocoded_by :address
+  after_validation :geocode
 
-## Log In Page
+  def address
+    [street, suburb, state, country].compact.join(', ')
+  end
+end
+```
 
-![login-desktop](docs/wireframes/login-desktop.png)
+And this is what sits in the `Pins` controller:
 
-![login-mobile](docs/wireframes/login-mobile.png)
+```ruby
+class PinsController < ApplicationController
 
-## Sign Up Page
+  def index
+    @pins = Pin.all
 
-![sign-up-desktop](docs/wireframes/sign-up-desktop.png)
+    @locations = @pins.map{ |location| {
+      id: location[:id],
+      title: location[:title],
+      description: location[:description],
+      street: location[:street],
+      suburb: location[:suburb],
+      state: location[:state],
+      country: location[:country],
+      latitude: location[:latitude],
+      longitude: location[:longitude]
+    }}
+    
+    render json: @locations
+  end
 
-![signup-mobile](docs/wireframes/signup-mobile.png)
+  private
+    def pin_params
+      params.require(:pin).permit(:user_id, :title, :description, :street, :suburb, :state, :country, pin_family_attributes: [:pin_id])
+    end
+end
+```
 
+As the backend is now rendering an array of hashes from the `pins#index` method, the data looks like this when requested via http://localhost:4000/pins:
 
-# Trello Board
+![mapbox-json-index](./docs/screenshots/mapbox-json-index.png)
 
-![trello](docs/wireframes/trello-1.png)
+However, in order for the pin to be properly rendered on the map, the data must be converted into a GeoJSON format. To do so, the app uses the `geojson` library (https://www.npmjs.com/package/geojson). The process for converting the data and rendering it as a pin is shown in the code snippet below.
 
-![trello](docs/wireframes/trello-2.png)
+```jsx
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import ReactMapGL, { NavigationControl, Marker, Popup } from 'react-map-gl';
+import GeoJSON from 'geojson';
+
+// state that manages the JSON data coming from the backend
+const [locationsFromBackend, setLocationsFromBackend] = useState([]);
+
+// state that manages how the popup of a pin is displayed
+const [selectedPin, setSelectedPin] = useState(null);
+
+// this useEffect sets the locationsFromBackend state with an array of objects.
+useEffect(() => {
+    api.get('/pins').then(({ data }) => {
+      setLocationsFromBackend(data);
+    });
+}, []);
+
+// GeoJSON.parse() takes an array (or an object) as the first argument, and the second argument takes an object that specifies the geometry values (the coordinates).
+const pins = GeoJSON.parse(locationsFromBackend, {
+    Point: ['latitude', 'longitude'],
+});
+
+// at this point the <pins> variable will hold the data structured like this:
+/*
+  {
+  	"type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Point",
+        "properties": {
+          "title": "David Habour's Female Doppelganger",
+          "description": "There's been a rumour that a hideous female version of the actor David Habour is haunting civilians near the water. Beware!",
+          "street": "14 Darling Dr",
+          "suburb": "Sydney",
+          "state": "NSW",
+          "country": "Australia"
+        },
+        "geometry": {
+          "coordinates": [
+            151.1995011,
+            -33.8767012
+          ]
+        }
+      }
+    ]
+  }
+*/
+
+// final map result
+return (
+  // the map container
+    <ReactMapGL
+      {...viewport}
+      width="100%"
+      height="50vh"
+      mapboxApiAccessToken={mapboxApiKey}
+      mapStyle="mapbox://styles/nictordan/ckryyeqgzgcl817mbs5hil5se"
+      onViewportChange={(nextViewport) => setViewport(nextViewport)}
+    >
+      <NavigationControl style={navigationControls} showCompass={false} />
+
+      {pins.features.map((feature) => (
+        // using the Marker component provided by ReactMapGL, each feature (pin) is rendered in the following format
+        <Marker
+          key={feature.properties.id}
+          latitude={feature.geometry.coordinates[1]}
+          longitude={feature.geometry.coordinates[0]}
+        >
+          <button
+            className="pin"
+            onClick={(e) => {
+              e.preventDefault();
+            // when a pin is clicked, the information about that pin is stored in the selectedPin state
+              setSelectedPin(feature);
+            }}
+          >
+            <img
+              src={customIcon}
+              alt="Icon that displays a location marker on the map"
+            />
+          </button>
+        </Marker>
+      ))};
+
+    {/* when there's a selectedPin (as set when the pin is clicked), display a popup in the following format */}
+      {selectedPin ? (
+        <Popup
+          className="popup"
+          offsetTop={-10}
+          offsetLeft={22}
+          latitude={selectedPin.geometry.coordinates[1]}
+          longitude={selectedPin.geometry.coordinates[0]}
+          onClose={() => {
+            setSelectedPin(null);
+          }}
+          // this stops the popup from closing if the user clicks anywhere on the map instead of the X icon in the popup.
+          closeOnClick={false}
+        >
+          <div>
+            <p>
+              <strong>{selectedPin.properties.title}</strong>
+            </p>
+            <p>{selectedPin.properties.description}</p>
+            <Button onClick={() => handleCurrentPin(selectedPin, dispatch)}>
+              <Link to="/pin">Go to notes</Link>
+            </Button>
+          </div>
+        </Popup>
+      ) : null}
+    </ReactMapGL>
+  );
+};
+```
 
