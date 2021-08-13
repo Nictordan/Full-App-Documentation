@@ -2,8 +2,11 @@
 
 ### Links
 
-GitHub repository: https://github.com/Nictordan
+Deployed app: https://sydney-paranormal.netlify.app/
 
+Frontend GitHub repository: https://github.com/Nictordan/sydney-paranormal-client
+
+Backend GitHub repository: https://github.com/Nictordan/sydney-paranormal-api
 
 ## Purpose
 
