@@ -88,6 +88,48 @@ The other primary target consists of people who may not have actually witnessed 
 
 ## Description of APIs Used
 
+### Axios
+
+Throughout the project we have used the Axios API (https://github.com/axios/axios) to simplify HTTP requests on the frontend. The following code snippet demonstrates this process.
+
+```jsx
+import axios from 'axios';
+
+// setApiUrl will be set to either of the return values depending on the environment
+export const setApiUrl = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://sydney-paranormal-api.herokuapp.com';
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.REACT_APP_API_URL || 'http://localhost:4000';
+  }
+};
+
+const apiUrl = setApiUrl();
+
+/* with the above in mind, the api variable is created from the value within apiUrl.
+ 	 Instead of having to repeatedly call 
+
+    fetch('http://localhost:4000/') {
+         ... 
+    }
+    
+    axios simply requires:
+    
+    axios.get('/endpoint', {
+    	...
+    })
+    .then(...)
+*/
+     
+const api = axios.create({
+  baseURL: apiUrl,
+});
+
+export default api;
+```
+
 ### Mapbox
 
 Mapbox is an open source library for creating interactive maps. Aside from providing developers with a detailed documentation for integrating it in a JavaScript-based frontend application, it also provides tools for customizing the style of the map itself. This tool is called Mapbox Studio and it sits on Mapbox's website. 
@@ -306,5 +348,121 @@ return (
     </ReactMapGL>
   );
 };
+```
+
+---
+
+## Database 
+
+### Entity Relationship Diagram
+
+![erd](./docs/erd/erd.png)
+
+### Schema
+
+```ruby
+create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "text"
+    t.date "date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "note_id"
+    t.bigint "user_id"
+    t.index ["note_id"], name: "index_comments_on_note_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.string "imageable_type", null: false
+    t.bigint "imageable_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["imageable_type", "imageable_id"], name: "index_images_on_imageable"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.date "date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "pin_id"
+    t.bigint "user_id"
+    t.bigint "image_id"
+    t.index ["image_id"], name: "index_notes_on_image_id"
+    t.index ["pin_id"], name: "index_notes_on_pin_id"
+    t.index ["user_id"], name: "index_notes_on_user_id"
+  end
+
+  create_table "pin_families", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "pin_id"
+    t.index ["pin_id"], name: "index_pin_families_on_pin_id"
+  end
+
+  create_table "pins", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "pin_family_id"
+    t.bigint "user_id"
+    t.string "street"
+    t.string "suburb"
+    t.string "state"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.index ["pin_family_id"], name: "index_pins_on_pin_family_id"
+    t.index ["user_id"], name: "index_pins_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "email"
+    t.string "password_digest"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "comments", "notes"
+  add_foreign_key "comments", "users"
+  add_foreign_key "notes", "images"
+  add_foreign_key "notes", "pins"
+  add_foreign_key "notes", "users"
+  add_foreign_key "pin_families", "pins"
+  add_foreign_key "pins", "pin_families"
+  add_foreign_key "pins", "users"
 ```
 
