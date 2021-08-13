@@ -63,7 +63,7 @@ In line with the user stories, Sydney Paranormal currenty supports a limited set
 - Users can register a new paranormal event by filling a form. The form requires a title, description, and the address where the event happened (i.e. street, suburb, state, and country). 
 - **Important:** The added pin shows up on the map after a page refresh.
 - When a given pin is clicked, a pop-up display appears on top of the pin, which shows both the title and description of the event, as well as a button that redirects to a page containing notes about the event at hand. If a pin doesn't have any notes attached to it, users can create one.
-- Users can leave comments about the notes related to a given pin.
+- Users can add notes and, once added, they can click on them to view comments from other users related to the pin.
 
 ## Target Audience
 
@@ -85,6 +85,50 @@ The other primary target consists of people who may not have actually witnessed 
 - Netlify: Deployment platform for the client side of the application.
 - Git / GitHub: Technologies used for version control.
 - Trello: Project management platform.
+
+## Screenshots
+
+### About Page
+
+![app-9-about](./docs/screenshots/app-8-about.png)
+
+### Home Page - Empty Map
+
+![app-1-empty-map](./docs/screenshots/app-1-empty-map.png)
+
+### Form to Add Pin
+
+![app-2-add-pin](./docs/screenshots/app-2-add-pin.png)
+
+### Pin Popup Information
+
+![app-3-pin-popup](./docs/screenshots/app-3-pin-popup.png)
+
+### Form to Add a Note to the Pin
+
+![app-4-note-form](./docs/screenshots/app-4-note-form.png)
+
+### List of Notes when Added
+
+![app-5-note-list](./docs/screenshots/app-5-note-list.png)
+
+### Form to Add Comments about a Note
+
+![app-6-note-comment](./docs/screenshots/app-6-note-comment.png)
+
+### List of Comments about a Note
+
+![app-7-comment-list](./docs/screenshots/app-7-comment-list.png)
+
+### Sign Up Page
+
+![app-9-signup](./docs/screenshots/app-9-signup.png)
+
+### Log In Page
+
+![app-10-login](./docs/screenshots/app-10-login.png)
+
+---
 
 ## Description of APIs Used
 
